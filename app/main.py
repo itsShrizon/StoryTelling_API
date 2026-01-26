@@ -2,7 +2,8 @@ from fastapi import FastAPI, HTTPException
 from app.models.schemas import (
     ChatRequest, ChatResponse,
     LearnRequest, LearnResponse,
-    GrammarRequest, GrammarResponse
+    GrammarRequest, GrammarResponse,
+    AssistantConfig
 )
 from app.application.orchestrator import Orchestrator
 
@@ -53,3 +54,26 @@ async def grammar_endpoint(request: GrammarRequest):
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+# --- Settings Endpoints ---
+
+@app.get("/settings/assistant", response_model=AssistantConfig)
+async def get_assistant_settings():
+    """
+    Get current AI Assistant configuration.
+    """
+    try:
+        return orchestrator.config_service.get_config()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/settings/assistant", response_model=AssistantConfig)
+async def update_assistant_settings(config: AssistantConfig):
+    """
+    Update AI Assistant configuration.
+    """
+    try:
+        orchestrator.config_service.save_config(config)
+        return config
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

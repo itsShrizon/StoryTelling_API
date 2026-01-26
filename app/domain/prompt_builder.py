@@ -2,14 +2,11 @@ from typing import List, Optional
 
 class PromptBuilder:
     @staticmethod
-    def build_system_prompt(context: Optional[str] = None) -> str:
+    def build_system_prompt(behavior_settings: str, context: Optional[str] = None) -> str:
         """
-        Constructs the system prompt, incorporating optional context.
+        Constructs the system prompt using dynamic behavior settings.
         """
-        base_prompt = (
-            "You are a helpful and friendly voice chat assistant. "
-            "Keep your responses concise and conversational, suitable for speech output."
-        )
+        base_prompt = behavior_settings
         
         if context:
             base_prompt += f"\n\nContext provided: {context}"

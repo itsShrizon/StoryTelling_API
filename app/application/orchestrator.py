@@ -9,6 +9,7 @@ from app.domain.prompt_builder import PromptBuilder
 from app.domain.conversation import ConversationManager
 from app.domain.grammar.grammar_service import GrammarService
 from app.guardrails.guardrails import Guardrails
+from app.infrastructure.config_service import JsonConfigService
 import base64
 
 class Orchestrator:
@@ -21,10 +22,12 @@ class Orchestrator:
         # Inject LLM client into GrammarService
         self.grammar_service = GrammarService(self.llm_client)
         self.guardrails = Guardrails()
+        self.config_service = JsonConfigService()
 
     def handle_chat_request(self, request: ChatRequest) -> ChatResponse:
-        # 1. Construct System Prompt & Format History
-        system_prompt = self.prompt_builder.build_system_prompt(request.context)
+        # 1. Fetch Config & Construct System Prompt
+        config = self.config_service.get_config()
+        system_prompt = self.prompt_builder.build_system_prompt(config.behavior_settings, request.context)
         formatted_history = self.prompt_builder.format_conversation_history(request.conversation_history)
         
         # Combine into complete user message context
