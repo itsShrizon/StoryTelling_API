@@ -29,3 +29,8 @@ class GrammarRequest(BaseModel):
 
 class GrammarResponse(BaseModel):
     corrected_text: str = Field(..., description="Grammatically corrected text")
+
+# --- Configuration Models ---
+class AssistantConfig(BaseModel):
+    name: str = Field(..., description="Name of the AI Assistant")
+    behavior_settings: str = Field(..., description="System prompt or behavior description")
